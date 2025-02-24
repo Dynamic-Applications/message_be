@@ -6,9 +6,7 @@ const User = require("../users/users-model");
 const router = express.Router();
 
 router.post("/register", async (req, res) => {
-    const { username, email, password, role_name } = req.body;
-
-    const role = role_name || "user";
+    const { username, email, password } = req.body;
 
     try {
         const hashedPassword = await bcrypt.hash(password, 5);
@@ -16,10 +14,9 @@ router.post("/register", async (req, res) => {
             username,
             email,
             hashedPassword,
-            role
         );
         res.status(201).json({
-            message: `Welcome to FilmFaves, ${result.rows[0].username}`,
+            message: `Welcome to Message, ${result.rows[0].username}`,
         });
     } catch (err) {
         res.status(500).json({
@@ -48,12 +45,10 @@ router.post("/login", async (req, res, next) => {
             return res.status(401).json(authError);
         }
 
-        const roleName =
-            user.roles && user.roles.length > 0 ? user.roles[0] : "user";
-
-        const token = buildToken(user, roleName);
+        
+        const token = buildToken(user);
         res.status(200).json({
-            message: `Welcome back, ${user.username}!, You are logged in as a ${roleName}`,
+            message: `Welcome back, ${user.username}!`,
             token,
         });
     } catch (err) {
@@ -61,12 +56,11 @@ router.post("/login", async (req, res, next) => {
     }
 });
 
-function buildToken(user, roleName) {
+function buildToken(user) {
     const payload = {
         subject: user.id,
         username: user.username,
         email: user.email,
-        role_name: roleName,
     };
     const options = {
         expiresIn: "30min",
