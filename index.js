@@ -1,17 +1,19 @@
 const http = require("http");
 const socketIo = require("socket.io");
-const server = require("./server");
-const db = require("./config/db");
+const expressApp = require("./server"); // your Express app (server.js)
 
 const port = process.env.PORT || 6000;
 
 // Create HTTP server from Express app
-const app = http.createServer(server);
+const app = http.createServer(expressApp);
 
 // Attach Socket.IO
 const io = socketIo(app, {
     cors: {
-        origin: ["http://localhost:3000", process.env.UI_URL_PROD],
+        origin: [
+            "http://localhost:3000", // Development frontend URL
+            process.env.UI_URL_PROD, // Production frontend URL (e.g., https://your-frontend.com)
+        ],
         methods: ["GET", "POST"],
         credentials: true,
     },
@@ -23,14 +25,14 @@ io.on("connection", (socket) => {
 
     socket.on("chat message", async (msg) => {
         try {
+            // Your database insert logic for saving messages (e.g., with PostgreSQL)
             const result = await db.query(
                 "INSERT INTO messages (username, content) VALUES ($1, $2) RETURNING *",
                 [msg.username, msg.content]
             );
-
             const savedMessage = result.rows[0];
 
-            // Broadcast to all clients
+            // Broadcast to all connected clients
             io.emit("chat message", savedMessage);
         } catch (err) {
             console.error("❌ Failed to save message:", err.message);

@@ -1,6 +1,18 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const User = require("../users/users-model"); // your user DB access file
+const User = require("../users/users-model");
+
+// Optional: Load environment variables in development
+if (process.env.NODE_ENV !== "production") {
+    require("dotenv").config();
+}
+
+// Ensure required env vars are present
+if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    throw new Error(
+        "Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET in environment variables."
+    );
+}
 
 passport.use(
     new GoogleStrategy(
