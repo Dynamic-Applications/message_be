@@ -24,22 +24,22 @@ const io = socketIo(app, {
 io.on("connection", (socket) => {
     console.log(`🟢 Client connected: ${socket.id}`);
 
-    socket.on("chat message", async (msg) => {
-        try {
-            // Your database insert logic for saving messages (e.g., with PostgreSQL)
-            const result = await db.query(
-                "INSERT INTO messages (username, content) VALUES ($1, $2) RETURNING *",
-                [msg.username, msg.content]
-            );
-            const savedMessage = result.rows[0];
+   socket.on("chat message", async (msg) => {
+       try {
+           // Assuming msg has: { user_id, conv_id, content }
+           const result = await db.query(
+               "INSERT INTO messages (user_id, conv_id, content, sent_at) VALUES ($1, $2, $3, NOW()) RETURNING *",
+               [msg.user_id, msg.conv_id, msg.content]
+           );
+           const savedMessage = result.rows[0];
 
-            // Broadcast to all connected clients
-            io.emit("chat message", savedMessage);
-        } catch (err) {
-            console.error("❌ Failed to save message:", err.message);
-            socket.emit("error", { message: "Failed to save message." });
-        }
-    });
+           // Broadcast to all connected clients
+           io.emit("chat message", savedMessage);
+       } catch (err) {
+           console.error("❌ Failed to save message:", err.message);
+           socket.emit("error", { message: "Failed to save message." });
+       }
+   });
 
     socket.on("disconnect", () => {
         console.log(`🔴 Client disconnected: ${socket.id}`);
