@@ -1,7 +1,7 @@
 exports.up = function (knex) {
     return knex.schema.createTable("conv", function (table) {
-        table.increments("id").primary(); // Auto-incrementing id
-        table.timestamp("created_at").defaultTo(knex.fn.now()); // Default to current timestamp
+        table.increments("id").primary();
+        table.string("title").notNullable(); // Ensure this column is present
     });
 };
 

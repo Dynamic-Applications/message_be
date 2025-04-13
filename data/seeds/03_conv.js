@@ -1,12 +1,10 @@
-exports.seed = function (knex) {
+exports.seed = async function (knex) {
     // Deletes ALL existing entries
-    return knex("conv")
-        .del()
-        .then(function () {
-            // Inserts seed entries
-            return knex("conv").insert([
-                { id: 1, created_at: knex.fn.now() },
-                { id: 2, created_at: knex.fn.now() },
-            ]);
-        });
+    await knex("conv").del();
+
+    // Inserts seed entries
+    await knex("conv").insert([
+        { id: 1, title: "General Conversation" }, // Example data
+        { id: 2, title: "Project Discussion" },
+    ]);
 };
