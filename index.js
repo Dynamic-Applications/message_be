@@ -1,3 +1,4 @@
+const db = require("./config/db");
 const http = require("http");
 const socketIo = require("socket.io");
 const expressApp = require("./server"); // your Express app (server.js)
