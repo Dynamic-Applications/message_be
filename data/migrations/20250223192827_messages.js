@@ -1,6 +1,6 @@
 exports.up = function (knex) {
     return knex.schema.createTable("messages", function (table) {
-        table.increments("id").primary(); // Auto-incrementing id
+        table.increments("id"); // Auto-incrementing id
         table
             .integer("user_id")
             .unsigned()
