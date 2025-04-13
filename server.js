@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const passport = require("passport");
 
 // Require the routes
 const welcomeRouter = require('./api/welcome/welcome-router');
@@ -26,6 +27,9 @@ server.use(
 
 // Parse JSON body
 server.use(express.json());
+
+// Initialize Passport
+server.use(passport.initialize());
 
 //Define the routes
 server.use('/', welcomeRouter);
