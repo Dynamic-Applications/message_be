@@ -12,8 +12,8 @@ const httpServer = createServer(server);
 const io = new Server(httpServer, {
     cors: {
         origin: [
-            "https://message-chat-app.netlify.app",
-            "http://localhost:3000",
+            process.env.UI_URL_PROD,
+            process.env.UI_URL_LOCAL,
         ],
         methods: ["GET", "POST"],
         credentials: true,

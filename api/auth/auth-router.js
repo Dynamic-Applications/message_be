@@ -91,16 +91,18 @@ router.get(
                     .json({ message: "Failed to generate JWT token." });
             }
 
-            // Try to use the production URL first
-            const isProd = process.env.NODE_ENV === "production";
-            const baseUrl = process.env.UI_URL_PROD || process.env.UI_URL_LOCAL;
+            // Decide the base URL (production or local)
+            const isProd = process.env.UI_URL_PROD;
+            const isLocal = process.env.UI_URL_LOCAL;
 
-            // If the production URL is available, it will be preferred, otherwise use local
-            const cleanBaseUrl = baseUrl.replace(/\/+$/, ""); // Ensure no trailing slash
+            const cleanBaseUrl = isProd.replace(/\/+$/, ""); // Ensure no trailing slash
             const redirectUrl = `${cleanBaseUrl}/auth/google/callback?token=${token}`;
 
-            console.log(`Redirecting to: ${redirectUrl}`); // Debugging line to check the final URL
+            console.log(`Redirecting to: ${redirectUrl}`);
 
+            console.log(`Production URL: ${process.env.UI_URL_PROD}`);
+
+            // Redirect to the appropriate URL with the token
             return res.redirect(redirectUrl);
         } catch (error) {
             console.error("Error during Google OAuth callback:", error);
