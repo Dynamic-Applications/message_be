@@ -92,15 +92,15 @@ router.get(
             }
 
             // Decide the base URL (production or local)
-            const isProd = process.env.UI_URL_PROD;
-            const isLocal = process.env.UI_URL_LOCAL;
+            const baseUrl =
+                process.env.UI_URL_LOCAL ||
+                process.env.UI_URL_PROD ||
+                "http://localhost:3000";
 
-            const cleanBaseUrl = isProd.replace(/\/+$/, ""); // Ensure no trailing slash
+            const cleanBaseUrl = baseUrl.replace(/\/+$/, "");
             const redirectUrl = `${cleanBaseUrl}/auth/google/callback?token=${token}`;
 
             console.log(`Redirecting to: ${redirectUrl}`);
-
-            console.log(`Production URL: ${process.env.UI_URL_PROD}`);
 
             // Redirect to the appropriate URL with the token
             return res.redirect(redirectUrl);
