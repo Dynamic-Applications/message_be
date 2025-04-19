@@ -13,41 +13,27 @@ const convRouter = require("./api/conv/conv-router");
 
 const server = express();
 
-// Configure CORS
+// CORS Configuration
 const allowedOrigins = [
-    "http://localhost:3000",
-    "https://message-chat-app.netlify.app/",
+  "http://localhost:3000",
+  "https://message-chat-app.netlify.app",
 ];
 
 server.use(
-    cors({
-        origin: function (origin, callback) {
-            if (!origin || allowedOrigins.includes(origin)) {
-                callback(null, true);
-            } else {
-                callback(new Error("Not allowed by CORS"));
-            }
-        },
-        credentials: true,
-    })
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
 );
 
-// Handle preflight requests
-server.options("*", (req, res) => {
-    res.header("Access-Control-Allow-Origin", req.headers.origin);
-    res.header(
-        "Access-Control-Allow-Methods",
-        "GET, POST, PUT, DELETE, OPTIONS"
-    );
-    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-    res.sendStatus(200);
-});
-
-// Parse JSON body
-server.use(express.json());
-
-// Initialize Passport
-server.use(passport.initialize());
+server.use(express.json()); // Parse JSON
+server.use(passport.initialize()); // Init Passport
 
 //Define the routes
 server.use('/', welcomeRouter);
