@@ -1,4 +1,5 @@
 require("../auth/google");
+require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -77,23 +78,20 @@ router.get(
 router.get(
     "/google/callback",
     passport.authenticate("google", {
-        failureRedirect: "/login", // Redirect on failure
-        session: false, // We don't need a session since we're using JWT
+        failureRedirect: "/login",
+        session: false,
     }),
     (req, res) => {
         try {
-            // Generate JWT for the user after successful authentication
-            const token = generateJwt(req.user); // User object comes from passport.authenticate
+            // Use the correct JWT builder
+            const token = buildToken(req.user);
 
-            // Check if the token was successfully generated
             if (!token) {
                 return res.status(500).json({ message: "Failed to generate JWT token." });
             }
 
-            // Redirect to frontend with token in URL or as a cookie (you can decide here)
-            // Using URL query parameter
             return res.redirect(
-                `${process.env.CLIENT_URL}/auth/google/callback?token=${token}`
+                `${process.env.UI_URL_LOCAL}/auth/google/callback?token=${token}`
             );
         } catch (error) {
             console.error("Error during Google OAuth callback:", error);
@@ -101,6 +99,7 @@ router.get(
         }
     }
 );
+
 
 
 router.get("/logout", async (req, res) => {
