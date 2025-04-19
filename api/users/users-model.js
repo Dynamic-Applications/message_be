@@ -12,6 +12,10 @@ const findByUsername = async (username) => {
     return db.query("SELECT * FROM users WHERE username = $1", [username]);
 }
 
+async function findByEmail(email) {
+    return db.query("SELECT * FROM users WHERE email = $1", [email]);
+}
+
 const addUser = async (username, email, password) => {
     return db.query(
         "INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING *",
@@ -41,6 +45,7 @@ module.exports = {
     findAllUsers,
     findById,
     findByUsername,
+    findByEmail,
     addUser,
     updateUser,
     deleteUser,

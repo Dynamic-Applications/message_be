@@ -3,7 +3,7 @@ exports.up = function (knex) {
         table.increments("id").primary(); // Auto-incrementing id
         table.string("username").notNullable();
         table.string("email").notNullable().unique();
-        table.string("password").notNullable();
+        table.string("password")
         table.string("reset_password_token");
         table.timestamp("reset_password_token_expires");
         table.timestamp("created_at").defaultTo(knex.fn.now()); // Default to current timestamp

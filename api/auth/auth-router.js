@@ -67,39 +67,41 @@ router.post("/login", async (req, res, next) => {
     }
 });
 
-// Autonomous Login (auto-login with token)
-router.get("/autologin", restricted, async (req, res) => {
-    try {
-        const result = await User.findById(req.user.subject);
-        const user = result.rows[0];
-        if (!user) return res.status(404).json({ message: "User not found" });
-
-        res.status(200).json({
-            message: "Auto-login success",
-            user,
-        });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-// Google OAuth Login
+// Redirect to Google
 router.get(
-    "/auth/google",
+    "/google",
     passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
+// Callback from Google
 router.get(
-    "/auth/google/callback",
-    passport.authenticate("google", { session: false }),
+    "/google/callback",
+    passport.authenticate("google", {
+        failureRedirect: "/login", // Redirect on failure
+        session: false, // We don't need a session since we're using JWT
+    }),
     (req, res) => {
-        const token = buildToken(req.user);
-        res.json({
-            message: `Google login success, welcome ${req.user.username}`,
-            token,
-        });
+        try {
+            // Generate JWT for the user after successful authentication
+            const token = generateJwt(req.user); // User object comes from passport.authenticate
+
+            // Check if the token was successfully generated
+            if (!token) {
+                return res.status(500).json({ message: "Failed to generate JWT token." });
+            }
+
+            // Redirect to frontend with token in URL or as a cookie (you can decide here)
+            // Using URL query parameter
+            return res.redirect(
+                `${process.env.CLIENT_URL}/auth/google/callback?token=${token}`
+            );
+        } catch (error) {
+            console.error("Error during Google OAuth callback:", error);
+            return res.status(500).json({ message: "An error occurred during authentication." });
+        }
     }
 );
+
 
 router.get("/logout", async (req, res) => {
     try {
