@@ -15,8 +15,8 @@ const server = express();
 
 // Configure CORS
 const allowedOrigins = [
-    "http://localhost:3000", // Development frontend
-    "https://message-chat-app.netlify.app/", // Production frontend
+    "http://localhost:3000",
+    "https://message-chat-app.netlify.app/",
 ];
 
 server.use(
@@ -28,10 +28,20 @@ server.use(
                 callback(new Error("Not allowed by CORS"));
             }
         },
-        allowedHeaders: ["Content-Type"],
         credentials: true,
     })
 );
+
+// Handle preflight requests
+server.options("*", (req, res) => {
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+    res.header(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS"
+    );
+    res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+    res.sendStatus(200);
+});
 
 // Parse JSON body
 server.use(express.json());
