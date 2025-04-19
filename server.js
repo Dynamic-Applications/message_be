@@ -15,8 +15,8 @@ const server = express();
 
 // Configure CORS
 const allowedOrigins = [
-    process.env.UI_URL_PROD,
-    process.env.UI_URL_LOCAL,
+    "http://localhost:3000", // Development frontend
+    "https://message-chat-app.netlify.app/", // Production frontend
 ];
 
 server.use(
