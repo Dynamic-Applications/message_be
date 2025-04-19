@@ -11,7 +11,7 @@ const router = express.Router();
 // Helper: Build token
 function buildToken(user) {
     const payload = {
-        subject: user.id,
+        id: user.id,
         username: user.username,
         email: user.email,
     };

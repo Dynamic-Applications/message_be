@@ -18,10 +18,17 @@ const allowedOrigins = [
     "http://localhost:3000", // Development frontend
     process.env.UI_URL_PROD, // Production frontend
 ];
+
 server.use(
     cors({
-        origin: allowedOrigins,
-        credentials: true, // Allow cookies or auth headers
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS"));
+            }
+        },
+        credentials: true,
     })
 );
 

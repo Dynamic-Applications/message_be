@@ -1,7 +1,6 @@
 exports.up = function (knex) {
-    return knex.schema.createTable("messages", function (table) {
-        table.increments("id").primary(); // Auto-incrementing primary key
-
+    return knex.schema.createTable("messages", (table) => {
+        table.increments("id");
         table
             .integer("user_id")
             .unsigned()
@@ -9,18 +8,8 @@ exports.up = function (knex) {
             .references("id")
             .inTable("users")
             .onDelete("CASCADE");
-
-        table
-            .integer("conv_id")
-            .unsigned()
-            .notNullable()
-            .references("id")
-            .inTable("conv")
-            .onDelete("CASCADE");
-
-        table.text("content").notNullable();
-
-        table.timestamp("sent_at").notNullable().defaultTo(knex.fn.now());
+        table.text("text").notNullable();
+        table.timestamp("created_at").defaultTo(knex.fn.now());
     });
 };
 

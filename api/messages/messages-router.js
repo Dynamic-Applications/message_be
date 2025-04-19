@@ -8,12 +8,12 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     try {
         const messages = await Messages.findAllMessages();
-        res.json(messages.rows)
+        res.json(messages.rows);
     } catch (err) {
         res.status(500).json({
-            message: `Failed to get messages: ${err.message}`,
-        })
+            message: `Error fetching messages: ${err.message}`,
+        });
     }
-})
+});
 
 module.exports = router;

@@ -1,52 +1,25 @@
-const db = require("./config/db");
-const http = require("http");
-const socketIo = require("socket.io");
-const expressApp = require("./server"); // your Express app (server.js)
+require("dotenv").config(); // Load env variables
 
-const port = process.env.PORT || 6000;
+const server = require("./server");
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
-// Create HTTP server from Express app
-const app = http.createServer(expressApp);
+const socketHandler = require("./socketHandler"); // 👈 New handler file
 
-// Attach Socket.IO
-const io = socketIo(app, {
+const port = process.env.PORT || 4500;
+const httpServer = createServer(server);
+
+const io = new Server(httpServer, {
     cors: {
-        origin: [
-            "http://localhost:3000", // Development frontend URL
-            process.env.UI_URL_PROD, // Production frontend URL (e.g., https://your-frontend.com)
-        ],
+        origin: "http://localhost:3000",
         methods: ["GET", "POST"],
         credentials: true,
     },
 });
 
-// Real-time chat logic
-io.on("connection", (socket) => {
-    console.log(`🟢 Client connected: ${socket.id}`);
+// Use socket auth and handlers
+socketHandler(io);
 
-   socket.on("chat message", async (msg) => {
-       try {
-           // Assuming msg has: { user_id, conv_id, content }
-           const result = await db.query(
-               "INSERT INTO messages (user_id, conv_id, content, sent_at) VALUES ($1, $2, $3, NOW()) RETURNING *",
-               [msg.user_id, msg.conv_id, msg.content]
-           );
-           const savedMessage = result.rows[0];
-
-           // Broadcast to all connected clients
-           io.emit("chat message", savedMessage);
-       } catch (err) {
-           console.error("❌ Failed to save message:", err.message);
-           socket.emit("error", { message: "Failed to save message." });
-       }
-   });
-
-    socket.on("disconnect", () => {
-        console.log(`🔴 Client disconnected: ${socket.id}`);
-    });
-});
-
-// Start server
-app.listen(port, () => {
-    console.log(`🚀 Server listening on port ${port}`);
+httpServer.listen(port, () => {
+    console.log(`listening on port ${port}`);
 });
