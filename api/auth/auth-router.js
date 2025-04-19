@@ -83,17 +83,24 @@ router.get(
     }),
     (req, res) => {
         try {
-            // Use the correct JWT builder
             const token = buildToken(req.user);
 
             if (!token) {
-                return res.status(500).json({ message: "Failed to generate JWT token." });
+                return res
+                    .status(500)
+                    .json({ message: "Failed to generate JWT token." });
             }
 
-            return res.redirect(
-                `${process.env.UI_URL_LOCAL}/auth/google/callback?token=${token}`,
-                `${process.env.UI_URL_PROD}/auth/google/callback?token=${token}`
-            );
+            // Decide redirect URL based on environment
+            const isProd = process.env.NODE_ENV === "production";
+            const baseUrl = isProd
+                ? process.env.UI_URL_PROD
+                : process.env.UI_URL_LOCAL;
+
+            const cleanBaseUrl = baseUrl.replace(/\/+$/, ""); // ensure no trailing slash
+            const redirectUrl = `${cleanBaseUrl}/auth/google/callback?token=${token}`;
+
+            return res.redirect(redirectUrl);
         } catch (error) {
             console.error("Error during Google OAuth callback:", error);
             return res.status(500).json({ message: "An error occurred during authentication." });
