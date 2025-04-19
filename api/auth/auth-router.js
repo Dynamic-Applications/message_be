@@ -91,7 +91,8 @@ router.get(
             }
 
             return res.redirect(
-                `${process.env.UI_URL_LOCAL}/auth/google/callback?token=${token}`
+                `${process.env.UI_URL_LOCAL}/auth/google/callback?token=${token}`,
+                `${process.env.UI_URL_PROD}/auth/google/callback?token=${token}`
             );
         } catch (error) {
             console.error("Error during Google OAuth callback:", error);
