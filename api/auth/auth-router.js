@@ -91,14 +91,15 @@ router.get(
                     .json({ message: "Failed to generate JWT token." });
             }
 
-            // Decide redirect URL based on environment
+            // Try to use the production URL first
             const isProd = process.env.NODE_ENV === "production";
-            const baseUrl = isProd
-                ? process.env.UI_URL_PROD
-                : process.env.UI_URL_LOCAL;
+            const baseUrl = process.env.UI_URL_PROD || process.env.UI_URL_LOCAL;
 
-            const cleanBaseUrl = baseUrl.replace(/\/+$/, ""); // ensure no trailing slash
+            // If the production URL is available, it will be preferred, otherwise use local
+            const cleanBaseUrl = baseUrl.replace(/\/+$/, ""); // Ensure no trailing slash
             const redirectUrl = `${cleanBaseUrl}/auth/google/callback?token=${token}`;
+
+            console.log(`Redirecting to: ${redirectUrl}`); // Debugging line to check the final URL
 
             return res.redirect(redirectUrl);
         } catch (error) {
