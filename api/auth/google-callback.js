@@ -1,5 +1,6 @@
 // netlify/functions/google-callback.js
 const { buildToken } = require("./auth-router"); // Adjust the path if necessary
+require("dotenv").config(); // Load env variables
 
 exports.handler = async function (event, context) {
     try {
