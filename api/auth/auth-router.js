@@ -93,8 +93,8 @@ router.get(
 
             // Decide the base URL (production or local)
             const baseUrl =
-                process.env.UI_URL_LOCAL ||
                 process.env.UI_URL_PROD ||
+                process.env.UI_URL_LOCAL ||
                 "http://localhost:3000";
 
             const cleanBaseUrl = baseUrl.replace(/\/+$/, "");
