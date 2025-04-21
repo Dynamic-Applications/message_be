@@ -1,6 +1,12 @@
 const express = require('express');
 const cors = require('cors');
 const passport = require("passport");
+const session = require("express-session");
+require("dotenv").config();
+require("./api/auth/passport");
+
+
+
 
 // Require the routes
 const welcomeRouter = require('./api/welcome/welcome-router');
@@ -32,8 +38,17 @@ server.use(
   })
 );
 
+server.use(
+    session({
+        secret: "your_secret_key",
+        resave: false,
+        saveUninitialized: true,
+    })
+);
+
 server.use(express.json()); // Parse JSON
 server.use(passport.initialize()); // Init Passport
+server.use(passport.session());
 
 //Define the routes
 server.use('/', welcomeRouter);
@@ -46,3 +61,17 @@ server.use("/conv", convRouter);
 
 
 module.exports = server;
+
+
+
+
+
+
+
+
+
+
+
+
+
+

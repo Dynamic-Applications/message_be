@@ -1,4 +1,3 @@
-require("../auth/google");
 require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcryptjs");
@@ -68,46 +67,41 @@ router.post("/login", async (req, res, next) => {
     }
 });
 
-// Redirect to Google
+// This route starts Google login
 router.get(
-    "/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
+  "/google",
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
 );
 
-// Callback from Google
+// This is where Google sends the user back after login
 router.get(
     "/google/callback",
     passport.authenticate("google", {
-        failureRedirect: "/login",
         session: false,
+        failureRedirect: process.env.UI_URL_PROD, // fallback
     }),
-    (req, res) => {
-        try {
-            const token = buildToken(req.user);
+    async (req, res) => {
+        const user = req.user;
 
-            if (!token) {
-                return res
-                    .status(500)
-                    .json({ message: "Failed to generate JWT token." });
-            }
+        const token = jwt.sign(
+            {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: "30min" }
+        );
 
-            // Decide the base URL (production or local)
-            const baseUrl = process.env.UI_URL_PROD || "http://localhost:3000";
-            const redirectUrl = `${baseUrl.replace(
-                /\/+$/,
-                ""
-            )}/auth/google/callback?token=${token}`;
-
-            console.log(`Redirecting to: ${redirectUrl}`);
-
-            // Redirect to the appropriate URL with the token
-            return res.redirect(redirectUrl);
-        } catch (error) {
-            console.error("Error during Google OAuth callback:", error);
-            return res.status(500).json({ message: "An error occurred during authentication." });
-        }
+        // Redirect back to frontend with the token
+        res.redirect(
+            `https://message-chat-app.netlify.app/auth/google/callback?token=${token}`
+        );
     }
 );
+
 
 
 
@@ -128,3 +122,6 @@ router.get("/logout", async (req, res) => {
 });
 
 module.exports = router;
+
+
+

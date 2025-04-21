@@ -1,15 +1,19 @@
-const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const passport = require("passport");
 const User = require("../users/users-model");
-require("dotenv").config();
 
+passport.serializeUser((user, done) => {
+    done(null, user.id); // store user ID in session
+});
 
-// Ensure required env vars are present
-if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
-    throw new Error(
-        "Missing GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET in environment variables."
-    );
-}
+passport.deserializeUser(async (id, done) => {
+    try {
+        const result = await User.findById(id);
+        done(null, result.rows[0]);
+    } catch (err) {
+        done(err, null);
+    }
+});
 
 passport.use(
     new GoogleStrategy(
@@ -23,13 +27,11 @@ passport.use(
                 const email = profile.emails[0].value;
                 const username = profile.displayName;
 
-                // Check if user already exists
                 let result = await User.findByEmail(email);
                 let user;
 
                 if (result.rows.length === 0) {
-                    // Add new user (no password needed for Google OAuth)
-                    const newUser = await User.addUser(username, email, null);
+                    const newUser = await User.addUser(username, email, null); // You can save null or empty password
                     user = newUser.rows[0];
                 } else {
                     user = result.rows[0];
