@@ -27,8 +27,8 @@ module.exports = function socketHandler(io) {
         }
         console.log(`${username} connected`);
 
-        socket.emit("message", `Welcome to Chat App, ${username}!`);
-        socket.broadcast.emit("message", `${username} connected`);
+        // socket.emit("message", `Welcome to Chat App, ${username}!`);
+        // socket.broadcast.emit("message", `${username} connected`);
 
         socket.on("message", async (data) => {
             const content = data.trim();
@@ -53,12 +53,12 @@ module.exports = function socketHandler(io) {
             }
         });
 
-        socket.on("activity", () => {
-            socket.broadcast.emit("activity", `${username}`);
-        });
+        // socket.on("activity", () => {
+        //     socket.broadcast.emit("activity", `${username}`);
+        // });
 
-        socket.on("disconnect", () => {
-            socket.broadcast.emit("message", `${username} disconnected`);
-        });
+        // socket.on("disconnect", () => {
+        //     socket.broadcast.emit("message", `${username} disconnected`);
+        // });
     });
 };
