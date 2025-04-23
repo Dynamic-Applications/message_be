@@ -16,7 +16,7 @@ function buildToken(user) {
         email: user.email,
     };
     const options = {
-        expiresIn: "30min",
+        expiresIn: "1d",
     };
     return jwt.sign(payload, process.env.JWT_SECRET, options);
 }
@@ -92,7 +92,7 @@ router.get(
                 email: user.email,
             },
             process.env.JWT_SECRET,
-            { expiresIn: "30min" }
+            { expiresIn: "1d" }
         );
 
         // Redirect back to frontend with the token
