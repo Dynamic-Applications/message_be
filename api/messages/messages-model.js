@@ -22,7 +22,7 @@ const addMessage = async (user_id, content) => {
     );
 };
 
-// Update a message
+// Edit a message
 const updateMessage = async (id, content) => {
     return db.query(
         `
