@@ -22,8 +22,35 @@ const addMessage = async (user_id, content) => {
     );
 };
 
+// Update a message
+const updateMessage = async (id, content) => {
+    return db.query(
+        `
+        UPDATE messages
+        SET text = $1
+        WHERE id = $2
+        RETURNING *;
+        `,
+        [content, id]
+    );
+};
+
+// Delete a message
+const deleteMessage = async (id) => {
+    return db.query(
+        `
+        DELETE FROM messages
+        WHERE id = $1
+        RETURNING *;
+        `,
+        [id]
+    );
+};
+
 
 module.exports = {
     findAllMessages,
     addMessage,
+    updateMessage,
+    deleteMessage,
 };
