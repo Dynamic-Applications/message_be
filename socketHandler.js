@@ -53,9 +53,9 @@ module.exports = function socketHandler(io) {
             }
         });
 
-        // socket.on("activity", () => {
-        //     socket.broadcast.emit("activity", `${username}`);
-        // });
+        socket.on("activity", () => {
+            socket.broadcast.emit("activity", `${username}`);
+        });
 
         // socket.on("disconnect", () => {
         //     socket.broadcast.emit("message", `${username} disconnected`);
