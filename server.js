@@ -4,6 +4,7 @@ const passport = require("passport");
 const session = require("express-session");
 require("dotenv").config();
 require("./api/auth/passport");
+require("./cron/cleanupMessages");
 
 
 
