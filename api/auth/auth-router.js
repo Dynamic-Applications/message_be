@@ -59,8 +59,12 @@ router.post("/login", async (req, res, next) => {
 
         const token = buildToken(user);
         res.status(200).json({
-            message: `Welcome back, ${user.username}!`,
             token,
+            user: {
+                id: user.id,
+                username: user.username,
+            },
+            message: `Welcome back, ${user.username}!`,
         });
     } catch (err) {
         next(err);
