@@ -16,5 +16,29 @@ exports.seed = async function (knex) {
             email: "bob@example.com",
             password: "password123", // Same placeholder for Bob
         },
+        {
+            id: 3,
+            username: "charlie",
+            email: "charlie@example.com",
+            password: "password123", // Same placeholder for Charlie
+        },
+        {
+            id: 4,
+            username: "dave",
+            email: "dave@example.com",
+            password: "password123", // Same placeholder for Dave
+        },
+        {
+            id: 5,
+            username: "eve",
+            email: "eve@example.com",
+            password: "password123", // Same placeholder for Eve
+        },
+        {
+            id: 6,
+            username: "frank",
+            email: "frank@example.com",
+            password: "password123", // Same placeholder for Frank
+        },  
     ]);
 };
