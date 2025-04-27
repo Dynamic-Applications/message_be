@@ -6,8 +6,9 @@ exports.up = function (knex) {
         table.string("password", 128);
         table.string("reset_password_token");
         table.timestamp("reset_password_token_expires");
-        // Add profile columns
-        table.text("avatar");
+        // Change avatar to bytea type for binary storage
+        table.binary("avatar");
+        table.string("avatar_type", 50); // To store the mime type (e.g., 'image/jpeg')
         table.string("status", 100).defaultTo("Available");
         table.string("phone", 20);
         table.text("location");

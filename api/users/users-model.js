@@ -68,6 +68,26 @@ const getProfile = async (id) => {
     );
 };
 
+const updateAvatar = async (id, avatarBuffer, mimeType) => {
+    return db.query(
+        `UPDATE users 
+         SET avatar = $1, 
+             avatar_type = $2
+         WHERE id = $3 
+         RETURNING id, username, email, avatar_type`,
+        [avatarBuffer, mimeType, id]
+    );
+};
+
+const getAvatar = async (id) => {
+    return db.query(
+        `SELECT avatar, avatar_type 
+         FROM users 
+         WHERE id = $1`,
+        [id]
+    );
+};
+
 module.exports = {
     findAllUsers,
     findById,
@@ -85,4 +105,6 @@ module.exports = {
     // findByResetToken,
     updateProfile,
     getProfile,
+    updateAvatar,
+    getAvatar,
 };
