@@ -1,18 +1,20 @@
 exports.up = function (knex) {
-    return knex.schema.createTable("users", function (table) {
-        table.increments("id").primary(); // Auto-incrementing id
-        table.string("username").notNullable();
-        table.string("email").notNullable().unique();
-        table.string("password")
+    return knex.schema.createTable("users", (table) => {
+        table.increments("id");
+        table.string("username", 128).notNullable().unique();
+        table.string("email", 128).notNullable().unique();
+        table.string("password", 128);
         table.string("reset_password_token");
         table.timestamp("reset_password_token_expires");
-        table.timestamp("created_at").defaultTo(knex.fn.now()); // Default to current timestamp
-        table
-            .integer("role_id")
-            .unsigned()
-            .references("id")
-            .inTable("roles")
-            .onDelete("SET NULL");
+        // Add profile columns
+        table.text("avatar");
+        table.string("status", 100).defaultTo("Available");
+        table.string("phone", 20);
+        table.text("location");
+        table.text("bio");
+        table.specificType("interests", "TEXT[]");
+        table.timestamp("joined_date").defaultTo(knex.fn.now());
+        table.timestamps(true, true);
     });
 };
 

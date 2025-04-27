@@ -8,6 +8,13 @@ exports.up = function (knex) {
             .references("id")
             .inTable("users")
             .onDelete("CASCADE");
+        table
+            .integer("conv_id")
+            .unsigned()
+            .notNullable()
+            .references("id")
+            .inTable("conv")
+            .onDelete("CASCADE");
         table.text("text").notNullable();
         table.timestamp("created_at").defaultTo(knex.fn.now());
     });

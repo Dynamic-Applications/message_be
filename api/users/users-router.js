@@ -1,5 +1,6 @@
 const express = require("express");
 const Users = require("./users-model");
+const { restricted } = require("../auth/auth-middleware"); // Changed from authenticateToken to restricted
 // const { restricted } = require('../auth/auth-middleware');
 
 const router = express.Router();
@@ -85,6 +86,61 @@ router.delete("/:id", async (req, res) => {
     } catch (err) {
         res.status(500).json({
             message: `Failed to delete user: ${err.message}`,
+        });
+    }
+});
+
+// Get user profile
+router.get("/profile", restricted, async (req, res) => {
+    try {
+        const profile = await Users.getProfile(req.user.id);
+
+        if (!profile.rows.length) {
+            return res.status(404).json({
+                message: "Profile not found",
+            });
+        }
+
+        // Remove sensitive information
+        const userProfile = profile.rows[0];
+        delete userProfile.password;
+
+        res.json(userProfile);
+    } catch (err) {
+        res.status(500).json({
+            message: `Failed to get profile: ${err.message}`,
+        });
+    }
+});
+
+// Update user profile
+router.put("/profile", restricted, async (req, res) => {
+    try {
+        const { avatar, status, phone, location, bio, interests } = req.body;
+
+        const updatedProfile = await Users.updateProfile(req.user.id, {
+            avatar,
+            status,
+            phone,
+            location,
+            bio,
+            interests: Array.isArray(interests) ? interests : null,
+        });
+
+        if (!updatedProfile.rows.length) {
+            return res.status(404).json({
+                message: "Profile not found",
+            });
+        }
+
+        // Remove sensitive information
+        const userProfile = updatedProfile.rows[0];
+        delete userProfile.password;
+
+        res.json(userProfile);
+    } catch (err) {
+        res.status(500).json({
+            message: `Failed to update profile: ${err.message}`,
         });
     }
 });

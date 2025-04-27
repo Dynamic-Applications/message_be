@@ -73,10 +73,10 @@ router.post("/login", async (req, res, next) => {
 
 // This route starts Google login
 router.get(
-  "/google",
-  passport.authenticate("google", {
-    scope: ["profile", "email"],
-  })
+    "/google",
+    passport.authenticate("google", {
+        scope: ["profile", "email"],
+    })
 );
 
 // This is where Google sends the user back after login
@@ -106,9 +106,6 @@ router.get(
     }
 );
 
-
-
-
 router.get("/logout", async (req, res) => {
     try {
         // Log the action (optional, only if you have the username from the session or token)
@@ -126,6 +123,3 @@ router.get("/logout", async (req, res) => {
 });
 
 module.exports = router;
-
-
-
