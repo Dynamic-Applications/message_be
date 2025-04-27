@@ -1,12 +1,11 @@
 const express = require("express");
 const Users = require("./users-model");
 const { restricted } = require("../auth/auth-middleware"); // Changed from authenticateToken to restricted
-// const { restricted } = require('../auth/auth-middleware');
 
 const router = express.Router();
 
 // Get all users
-router.get("/", async (req, res) => {
+router.get("/", restricted, async (req, res) => {
     try {
         const users = await Users.findAllUsers();
         res.json(users.rows);
@@ -93,7 +92,8 @@ router.delete("/:id", async (req, res) => {
 // Get user profile
 router.get("/profile", restricted, async (req, res) => {
     try {
-        const profile = await Users.getProfile(req.user.id);
+        console.log("REQ.USER:", req.user);
+        const profile = await Users.getProfile(Number(req.user.id));
 
         if (!profile.rows.length) {
             return res.status(404).json({
@@ -101,7 +101,6 @@ router.get("/profile", restricted, async (req, res) => {
             });
         }
 
-        // Remove sensitive information
         const userProfile = profile.rows[0];
         delete userProfile.password;
 
@@ -114,7 +113,7 @@ router.get("/profile", restricted, async (req, res) => {
 });
 
 // Update user profile
-router.put("/profile", restricted, async (req, res) => {
+router.put("/profile/:id", restricted, async (req, res) => {
     try {
         const { avatar, status, phone, location, bio, interests } = req.body;
 
