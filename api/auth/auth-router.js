@@ -111,29 +111,23 @@ router.get("/logout", async (req, res) => {
         // Log the action
         console.log("User logged out.");
 
-        // Clear the cookie with proper options
+        // Set CORS headers explicitly for this route
+        res.header("Access-Control-Allow-Origin", req.headers.origin);
+        res.header("Access-Control-Allow-Credentials", "true");
+
+        // Clear the cookie
         res.clearCookie("token", {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: "none", // Important for cross-site requests
             path: "/",
-            domain:
-                process.env.NODE_ENV === "production"
-                    ? ".your-domain.com" // Replace with your actual domain
-                    : "localhost",
         });
 
-        // Send response with CORS headers
-        res.status(200)
-            .header("Access-Control-Allow-Credentials", "true")
-            .header(
-                "Access-Control-Allow-Origin",
-                process.env.UI_URL_PROD || "http://localhost:3000"
-            )
-            .json({
-                message: "You have successfully logged out.",
-                success: true,
-            });
+        // Send success response
+        res.status(200).json({
+            message: "You have successfully logged out.",
+            success: true,
+        });
     } catch (error) {
         console.error("Error during logout:", error.message);
         res.status(500).json({
