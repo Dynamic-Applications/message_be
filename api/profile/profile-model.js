@@ -17,6 +17,14 @@ const updateProfile = async (id, profileData) => {
     );
 };
 
+const getAllProfiles = async () => {
+    return db.query(
+        `SELECT id, username, email, avatar, status, phone, 
+                location, bio, interests, joined_date 
+         FROM users`
+    );
+}
+
 const getProfile = async (id) => {
     return db.query(
         `SELECT id, username, email, avatar, status, phone, 
@@ -50,6 +58,7 @@ const getAvatar = async (id) => {
 module.exports = {
     updateProfile,
     getProfile,
+    getAllProfiles,
     updateAvatar,
     getAvatar,
 };

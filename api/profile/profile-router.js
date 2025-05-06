@@ -5,28 +5,57 @@ const { restricted } = require("../auth/auth-middleware"); // Changed from authe
 
 const router = express.Router();
 
-// Get user profile
-router.get("/", restricted, async (req, res) => {
+// Get all profiles
+router.get("/", async (req, res) => {
     try {
-        console.log("REQ.USER:", req.user);
-        const profile = await Profiles.getProfile(Number(req.user.id));
-
+        const profiles = await Profiles.getAllProfiles();
+        res.json(profiles.rows);
+    } catch (err) {
+        res.status(500).json({
+            message: `Failed to get profiles: ${err.message}`,
+        });
+    }
+});
+// Get profile by ID
+router.get("/:id", async (req, res) => {
+    try {
+        const profile = await Profiles.getProfile(req.params.id);
         if (!profile.rows.length) {
             return res.status(404).json({
                 message: "Profile not found",
             });
         }
-
-        const userProfile = profile.rows[0];
-        delete userProfile.password;
-
-        res.json(userProfile);
+        res.json(profile.rows[0]);
     } catch (err) {
         res.status(500).json({
             message: `Failed to get profile: ${err.message}`,
         });
     }
-});
+}
+);
+
+// // Get user profile
+// router.get("/", restricted, async (req, res) => {
+//     try {
+//         console.log("REQ.USER:", req.user);
+//         const profile = await Profiles.getProfile(Number(req.user.id));
+
+//         if (!profile.rows.length) {
+//             return res.status(404).json({
+//                 message: "Profile not found",
+//             });
+//         }
+
+//         const userProfile = profile.rows[0];
+//         delete userProfile.password;
+
+//         res.json(userProfile);
+//     } catch (err) {
+//         res.status(500).json({
+//             message: `Failed to get profile: ${err.message}`,
+//         });
+//     }
+// });
 
 // Update user profile
 router.put("/:id", async (req, res) => {
