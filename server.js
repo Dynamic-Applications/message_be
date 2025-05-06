@@ -14,6 +14,7 @@ const rolesRouter = require("./api/roles/roles-router");
 const messagesRouter = require("./api/messages/messages-router");
 const convUsersRouter = require("./api/conv_users/conv-users-router");
 const convRouter = require("./api/conv/conv-router");
+const profileRouter = require("./api/profile/profile-router");
 
 const server = express();
 
@@ -65,5 +66,6 @@ server.use("/roles", rolesRouter);
 server.use("/messages", messagesRouter);
 server.use("/conv-users", convUsersRouter);
 server.use("/conv", convRouter);
+server.use("/profile", profileRouter);
 
 module.exports = server;

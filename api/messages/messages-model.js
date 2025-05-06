@@ -11,6 +11,21 @@ const findAllMessages = async () => {
     `);
 };
 
+const findMessageById = async (id) => {
+    return db.query(
+        `
+        SELECT 
+            m.id, m.text, m.created_at,
+            u.id AS user_id, u.username
+        FROM messages m
+        JOIN users u ON m.user_id = u.id
+        WHERE m.id = $1;
+        `,
+        [id]
+    );
+};
+
+
 const addMessage = async (user_id, content) => {
     return db.query(
         `
@@ -50,6 +65,7 @@ const deleteMessage = async (id) => {
 
 module.exports = {
     findAllMessages,
+    findMessageById,
     addMessage,
     updateMessage,
     deleteMessage,

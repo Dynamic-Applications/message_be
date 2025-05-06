@@ -1,32 +1,35 @@
 exports.seed = async function (knex) {
-    // First, ensure the users table is empty
-    await knex("users").del();
+    // Deletes ALL existing entries
+    await knex("users_profiles").del();
 
-    // Insert seed data
-    await knex("users").insert([
+    // Inserts seed entries
+    await knex("users_profiles").insert([
         {
-            username: "john_doe",
-            email: "john@example.com",
-            password: "hashed_password_here", // In reality, this should be properly hashed
-            avatar: "https://example.com/avatars/john.jpg",
-            status: "Available",
-            phone: "+1234567890",
-            location: "New York, USA",
-            bio: "Software developer passionate about creating amazing applications",
-            interests: ["coding", "reading", "hiking"],
-            joined_date: new Date(),
+            user_id: 1,
+            avatar: "https://example.com/avatar1.jpg",
+            status: "Busy",
+            phone: "123-456-7890",
+            interests: ["coding", "music", "hiking"],
+            bio: "Full-stack developer and outdoor enthusiast.",
+            location: "San Francisco, CA",
         },
         {
-            username: "jane_smith",
-            email: "jane@example.com",
-            password: "hashed_password_here", // In reality, this should be properly hashed
-            avatar: "https://example.com/avatars/jane.jpg",
-            status: "Busy",
-            phone: "+1987654321",
-            location: "San Francisco, USA",
-            bio: "UX Designer with a love for creating beautiful interfaces",
-            interests: ["design", "art", "photography"],
-            joined_date: new Date(),
+            user_id: 2,
+            avatar: "https://example.com/avatar2.jpg",
+            status: "Available",
+            phone: "987-654-3210",
+            interests: ["gaming", "reading"],
+            bio: "Backend developer who loves sci-fi novels.",
+            location: "New York, NY",
+        },
+        {
+            user_id: 3,
+            avatar: null,
+            status: "Offline",
+            phone: null,
+            interests: null,
+            bio: null,
+            location: null,
         },
     ]);
 };

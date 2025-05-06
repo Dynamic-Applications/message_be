@@ -16,6 +16,37 @@ router.get("/", async (req, res) => {
     }
 });
 
+// Add a new message
+router.post("/", async (req, res) => {
+    const { user_id, text } = req.body;
+
+    try {
+        const newMessage = await Messages.addMessage(user_id, text);
+        res.status(201).json(newMessage.rows[0]);
+    } catch (err) {
+        res.status(500).json({
+            message: `Error adding message: ${err.message}`,
+        });
+    }
+});
+
+// Get a message by ID
+router.get("/:id", async (req, res) => {
+    try {
+        const message = await Messages.findMessageById(req.params.id);
+        if (!message.rowCount) {
+            return res.status(404).json({
+                message: "Message not found",
+            });
+        }
+        res.json(message.rows[0]);
+    } catch (err) {
+        res.status(500).json({
+            message: `Error fetching message: ${err.message}`,
+        });
+    }
+});
+
 // Update a message
 router.put("/:id", async (req, res) => {
     const { text } = req.body;
